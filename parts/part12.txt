@@ -1,0 +1,138 @@
+ass="small"><b>Finale geschafft!</b> ${meta.cheer} Feiert euren Erfolg und klickt dann auf „Zum Abschluss“.</span>`;
+      triggerFinalCelebration();
+    }
+  }else{
+    btn.classList.add('wrong');
+    startRetryDelay();
+  }
+}
+function next(){
+  state.index++;
+  save();
+  if(state.index>0 && state.index<15 && state.index % 3 === 0){ showStage(); } else { render(); }
+}
+function showStage(){
+  const stage = state.index/3 - 1;
+  $('stageText').textContent = stageNames[stage] + '. Ihr habt ' + state.index + ' Aufgaben geschafft.';
+  renderSidebarMap();
+  $('stageCard').classList.remove('hidden');
+}
+function continueStage(){ $('stageCard').classList.add('hidden'); render(); }
+function hint(){ if(waitLocked) return; const q=currentQuestion(); $('feedback').className='feedback warn'; $('feedback').innerHTML = `<b>Tipp:</b> ${fracHTML(q.hint)}`; }
+function renderSidebarMap(doneAll=false){
+  const box = $('sidebarMap');
+  if(!box) return;
+  const completedStops = doneAll ? MAP_STOPS.length : Math.floor(state.index/3);
+  const activeStop = doneAll ? -1 : Math.min(Math.floor(state.index/3), MAP_STOPS.length-1);
+  box.innerHTML = `<div class="sidebar-map-steps">` + MAP_STOPS.map((s,i)=>{
+    const cls = doneAll || i < completedStops ? 'done' : (i === activeStop ? 'active' : 'pending');
+    return `<div class="sstep ${cls}"><div class="dot">${s.icon}</div><div class="txt">${s.name}<br>${s.mascot}</div></div>`;
+  }).join('') + `</div>`;
+}
+function renderLog(){
+  const tb=$('logTable').querySelector('tbody'); tb.innerHTML='';
+  state.log.forEach(e=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${e.nr}</td><td>${e.topic}</td><td>${fracHTML(e.task)}</td><td>${fracHTML(e.result)}</td><td>${e.attempts}</td>`;
+    tb.appendChild(tr);
+  });
+}
+
+function hideCelebration(){
+  const overlay = $('celebrateOverlay');
+  const canvas = $('confettiCanvas');
+  if(overlay){ overlay.classList.remove('show'); }
+  if(canvas){
+    canvas.style.display='none';
+    const ctx = canvas.getContext && canvas.getContext('2d');
+    if(ctx){ ctx.clearRect(0,0,canvas.width,canvas.height); }
+  }
+  if(confettiFrame){ cancelAnimationFrame(confettiFrame); confettiFrame = null; }
+}
+function triggerFinalCelebration(){
+  if(finalCelebrationShown) return;
+  finalCelebrationShown = true;
+  const meta = LEVEL_META[state.level] || LEVEL_META.basis;
+  const overlay = $('celebrateOverlay');
+  const canvas = $('confettiCanvas');
+  $('celebrateRibbon').textContent = meta.ribbon;
+  $('celebrateLevelCheer').textContent = meta.cheer + ' Genießt euren Insel-Erfolg!';
+  if(!canvas || !canvas.getContext) return;
+  const ctx = canvas.getContext('2d');
+  if(!ctx) return;
+  const dpr = window.devicePixelRatio || 1;
+  const resize = ()=>{
+    canvas.width = Math.floor(window.innerWidth * dpr);
+    canvas.height = Math.floor(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  };
+  const star = (x,y,r,rot)=>{
+    ctx.beginPath();
+    for(let i=0;i<10;i++){
+      const ang = rot + i * Math.PI / 5;
+      const rad = i % 2 === 0 ? r : r * 0.45;
+      const px = x + Math.cos(ang) * rad;
+      const py = y + Math.sin(ang) * rad;
+      if(i===0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+    ctx.closePath();
+  };
+  resize();
+  canvas.style.display='block';
+  if(overlay){ overlay.classList.add('show'); }
+  const colors = ['#ff2d55','#ffcf33','#21b45b','#0b7edb','#6a4c93','#ff922b'];
+  const pieces = Array.from({length: 190}, (_,i)=>({
+    x: Math.random()*window.innerWidth,
+    y: -20 - Math.random()*window.innerHeight*0.8,
+    w: 7 + Math.random()*10,
+    h: 7 + Math.random()*14,
+    vy: 2 + Math.random()*4.8,
+    vx: -2.2 + Math.random()*4.4,
+    rot: Math.random()*Math.PI*2,
+    vr: -0.18 + Math.random()*0.36,
+    color: colors[i % colors.length],
+    shape: i % 7 === 0 ? 'star' : (Math.random() > .5 ? 'rect' : 'circle'),
+    alpha: .55 + Math.random()*.45
+  }));
+  const start = performance.now();
+  function draw(now){
+    const elapsed = now - start;
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    pieces.forEach(p=>{
+      p.x += p.vx;
+      p.y += p.vy;
+      p.rot += p.vr;
+      if(p.y > window.innerHeight + 30){ p.y = -20; p.x = Math.random()*window.innerWidth; }
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot);
+      ctx.globalAlpha = p.alpha;
+      ctx.fillStyle = p.color;
+      if(p.shape === 'circle'){
+        ctx.beginPath(); ctx.arc(0,0,p.w/2,0,Math.PI*2); ctx.fill();
+      } else if(p.shape === 'star'){
+        star(0,0,p.w/1.6,p.rot);
+        ctx.fill();
+      } else {
+        ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      }
+      ctx.restore();
+    });
+    if(elapsed < 11800){ confettiFrame = requestAnimationFrame(draw); }
+    else { hideCelebration(); }
+  }
+  confettiFrame = requestAnimationFrame(draw);
+  setTimeout(hideCelebration, 12000);
+}
+
+function finish(){
+  const m=currentMission();
+  const meta = LEVEL_META[state.level] || LEVEL_META.basis;
+  document.body.classList.remove('start-active','mission-active'); document.body.classList.add('finish-active');
+  $('game').classList.add('hidden');
+  $('progressBar').style.width='100%'; $('finish').classList.remove('hidden');
+  $('finishCheer').textContent = meta.finish;
+  $('finishText').innerHTML = `<b>${state.team}</b>, ihr habt das Niveau <b>${m.label}</b> erfolgreich abgeschlossen.`;
+  $('finishCode').textContent = 'Mission-Cod
