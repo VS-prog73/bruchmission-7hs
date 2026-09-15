@@ -1,0 +1,79 @@
+>
+      <div class="task" id="taskText"></div>
+      <div class="answers" id="answers"></div>
+      <div class="feedback" id="feedback">Wählt gemeinsam eine Antwort aus.</div>
+      <div class="game-actions no-print">
+        <button class="btn-light" id="hintBtn">Tipp anzeigen</button>
+        <button class="btn-orange hidden" id="nextBtn">Weiter</button>
+      </div>
+    </div>
+
+    <div class="card" id="logCard">
+      <h2>Digitales Logbuch</h2>
+      <div class="side-map-box">
+        <h3>🗺️ Eure kleine Abenteuerkarte</h3>
+        <div id="sidebarMap" class="sidebar-map"></div>
+        <div class="small">Grün = geschafft, Gelb = gerade dran.</div>
+      </div>
+      <p class="small">Das Arbeitsheft bleibt der Lernnachweis. Diese Tabelle hilft euch zusätzlich beim Übertragen.</p>
+      <div class="log-wrap">
+        <table class="log" id="logTable"><thead><tr><th>Nr.</th><th>Thema</th><th>Aufgabe</th><th>Ergebnis</th><th>Versuche</th></tr></thead><tbody></tbody></table>
+      </div>
+      <p class="no-print"><button class="btn-light" onclick="window.print()">Logbuch drucken</button> <button class="btn-danger" id="resetBtn">Mission zurücksetzen</button></p>
+    </div>
+
+    <div class="card success hidden" id="stageCard">
+      <h2>Teilerfolg erreicht</h2>
+      <p id="stageText"></p>
+      <p><b>Logbuch:</b> Tragt den Teilerfolg und ein Beispiel ein, das ihr gut verstanden habt.</p>
+      <button class="btn-green" id="stageNextBtn">Weiter zur Mission</button>
+    </div>
+  </section>
+
+  <section id="finish" class="card success hidden center finish-screen">
+    <div class="finish-topper">🎉 Mission komplett! 🎉</div>
+    <h2>Bruchinsel gerettet</h2>
+    <p id="finishCheer" class="finish-cheer"></p>
+    <div class="finish-grid">
+      <div class="finish-panel">
+        <p id="finishText" style="font-size:1.15rem;margin-top:0"></p>
+        <div class="finish-code" id="finishCode"></div>
+        <div class="finish-badges">
+          <span>✅ 15 Aufträge geschafft</span>
+          <span>📘 Logbuch geführt</span>
+          <span>🤝 Als Team gelöst</span>
+        </div>
+      </div>
+      <div class="finish-panel">
+        <h3>Das habt ihr erreicht</h3>
+        <ul class="finish-check">
+          <li>Brüche addiert und subtrahiert</li>
+          <li>Brüche multipliziert und dividiert</li>
+          <li>Anteile von Größen berechnet</li>
+          <li>Schritt für Schritt die Bruchinsel repariert</li>
+        </ul>
+        <div class="finish-note">Nächster Schritt: Prüft euer Arbeitsheft, ergänzt fehlende Einträge und zeigt euren Mission-Code.</div>
+      </div>
+    </div>
+    <div class="finish-actions">
+      <button class="btn-primary no-print" onclick="window.print()">Logbuch drucken</button>
+      <button class="btn-green no-print" onclick="location.reload()">Neue Mission starten</button>
+    </div>
+  </section>
+</main>
+
+<canvas id="confettiCanvas"></canvas>
+<div id="celebrateOverlay" aria-hidden="true">
+  <div class="celebrate-box">
+    <div class="sparkle-ring"><span>⭐</span><span>✨</span><span>⭐</span><span>✨</span><span>⭐</span><span>✨</span></div>
+    <div class="celebrate-ribbon" id="celebrateRibbon">Missionsziel erreicht</div>
+    <div class="celebrate-icon-row">🌟 🎉 🏝️ 🎉 🌟</div>
+    <h2 id="celebrateTitle">Geschafft!</h2>
+    <p class="celebrate-sub" id="celebrateSub"><b>Super Teamarbeit!</b> Alle Aufgaben der Mission wurden richtig gelöst.</p>
+    <p class="celebrate-level" id="celebrateLevelCheer">Die Bruchinsel ist geschafft – tragt jetzt euren Erfolg noch ins Logbuch ein.</p>
+    <div class="celebrate-pillrow"><span class="celebrate-pill">15 Aufträge</span><span class="celebrate-pill">5 Etappen</span><span class="celebrate-pill">1 Team-Erfolg</span></div>
+  </div>
+</div>
+
+<script>
+const MISSIONS = {"basis": {"label": "● Basisniveau", "badgeColor": "#2d6a4f", "missionCode": "INSEL-START", "intro": "Story-Mission mit einfachen Zahlen: Ihr rettet Schritt für Schritt das Bruch-Camp.", "questions": [{"id": "B1", "topic": "Vorratslager - Addition", "scene": "Im Vorratslager findet ihr zwei Kisten mit Müsliriegeln. Eine Kiste ist zu 1/5 gefüllt, die andere zu 2/5. Wie voll sind beide Kisten zusammen?", "q": "Rechnung: 1/5 + 2/5", "answers": ["2/10", "1/7", "3/5", "3/10"], "correct": "3/5", "hint": "Die Kisten haben denselben Nenner: Es geht immer um Fünftel.", "log": "Vorratskisten zusammenrechnen"}, {"id": "B2", "topic": "Kartenraum - Addition", "scene": "Eure Schatzkarte ist in Achtel geteilt. Ihr findet zuerst 3/8 der Karte und danach noch 1/8. Welcher Teil der Karte ist nun da?", "q": "Rechnung: 3/8 + 1/8, danach kürzen", "answers": ["4/16", "3/16", "2/8", "1/2"], "correct": "1/2", "hint": "3/8 + 1/8 = 4/8. 4/8 kann man kürzen.", "log": "Kartenteile addieren und kürzen"}, {"id": "B3", "topic": "Wasserstation - Addition", "scene": "Für den Marsch füllt ihr eine Wasserflasche. Erst kommen 1/4 hinein, dann noch 2/4. Wie voll ist die Flasche?", "q": "Rechnung: 1/4 + 2/4", "answers": ["3/4", "3/8", "1/2", "2/4"], "correct": "3/4", "hint": "Viertel plus Viertel bleiben Viertel. Addiere nur die Zähler.", "log": "Wasseranteile zusammenlegen"}, {"id": "B4", "topic": "Seilbrücke - Subtraktion", "scene": "Für eine Seilbrücke habt ihr 5/6 einer Seilrolle. 2/6 werden befestigt. Wie viel bleibt übrig?", "q": "Rechnung: 5/6 - 2/6, danach kürzen", "answers": ["3/12", "2/6", "1/2", "7/6"], "correct": "1/2", "hint": "5/6 - 2/6 = 3/6. Kürze das Ergebnis.", "log": "Seilreste berechnen"}, {"id": "B5", "topic": "Energie
