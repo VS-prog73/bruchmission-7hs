@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bruchmission 7 HS - Lernspiel</title>
+  <style>
+
+    :root{
+      --navy:#0f3f75; --blue:#039be5; --sky:#dff5ff; --green:#21b45b; --lime:#b8f95a;
+      --purple:#8e44ff; --pink:#ff3f8e; --orange:#ff922b; --yellow:#ffe14d; --red:#ff385c;
+      --paper:#fffdf4; --ink:#182033; --muted:#5f6473; --line:#162033;
+      --ok:#18a957; --bad:#e8394f; --light:#edf6ff;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 14% 12%, rgba(255,225,77,.65) 0 92px, transparent 94px),
+        radial-gradient(circle at 86% 8%, rgba(255,63,142,.38) 0 120px, transparent 122px),
+        radial-gradient(circle at 76% 72%, rgba(33,180,91,.25) 0 160px, transparent 162px),
+        linear-gradient(135deg,#ffffff 0%,#e9f7ff 42%,#fff2cd 100%);
+      min-height:100vh;
+      overflow:auto;
+    }
+    body.mission-active{overflow:hidden}
+    body.finish-active{overflow:auto}
+    body:before, body:after{
+      content:""; position:fixed; inset:0; pointer-events:none; z-index:-1;
+      background-image:
+        radial-gradient(#111827 1.25px, transparent 1.25px),
+        radial-gradient(#0ea5e9 1px, transparent 1px);
+      background-size:22px 22px, 30px 30px;
+      background-position:0 0, 11px 9px;
+      opacity:.10;
+    }
+    header{
+      position:sticky;top:0;z-index:10;
+      padding:12px 20px 14px;
+      background:linear-gradient(92deg,#0f3f75 0%,#0b7edb 45%,#8e44ff 100%);
+      color:white;
+      border-bottom:7px solid var(--yellow);
+      box-shadow:0 7px 0 rgba(24,32,51,.22);
+    }
+    header:after{
+      content:"MISSION BRUCH-PROFI"; position:absolute; right:18px; bottom:-19px;
+      background:var(--yellow); color:#172033; border:3px solid #172033; border-radius:999px;
+      padding:5px 13px; font-weight:900; transform:rotate(-2deg); box-shadow:3px 3px 0 #172033;
+      letter-spacing:.02em; font-size:.82rem;
+    }
+    h1{margin:0;color:white;font-size:clamp(1.55rem,4vw,2.55rem);letter-spacing:.02em;text-shadow:3px 3px 0 rgba(0,0,0,.28)}
+    h1:before{content:"🚀 ";}
+    h2{color:var(--navy);font-size:clamp(1.2rem,2.2vw,1.75rem);margin-top:0;text-shadow:1px 1px 0 rgba(255,225,77,.75)}
+    h3{margin-top:0;color:#12263f;font-size:1.12rem}
+    main{max-width:1380px;margin:0 auto;padding:8px 12px 12px;min-height:calc(100vh - 92px);height:auto}
+    body.mission-active main{height:calc(100vh - 92px);overflow:hidden}
+    body.finish-active main{height:auto;min-height:calc(100vh - 92px)}
+    .card{
+      position:relative;
+      background:rgba(255,253,244,.96);
+      border:4px solid var(--line);
+      border-radius:24px;
+      padding:14px;
+      box-shadow:8px 8px 0 rgba(24,32,51,.22);
+      margin:0;
+      overflow:hidden;
+    }
+    .card:before{
+      content:""; position:absolute; width:135px;height:135px; right:-48px; top:-55px;
+      background:repeating-radial-gradient(circle, rgba(255,225,77,.95) 0 7px, transparent 8px 14px);
+      opacity:.65; transform:rotate(14deg); pointer-events:none;
+    }
+    .hero{display:grid;grid-template-columns:1.25fr .9fr;gap:12px;align-items:start;min-height:unset}
+    .hero > div:first-child:before{
+      content:"Bruchmission"; display:inline-block; margin-bottom:10px;
+      background:var(--pink); color:white; border:3px solid var(--line); border-radius:14px;
+      padding:7px 13px; font-weight:900; box-shadow:4px 4px 0 var(--line); transform:rotate(-1.5deg);
+    }
+    p{line-height:1.38}
+    a{color:#0b66c3;font-weight:900;text-decoration-thickness:3px;text-underline-offset:3px}
+    .pill{
+      display:inline-block;border-radius:999px;padding:6px 11px;
+      background:var(--yellow);color:#162033;font-weight:900;margin:3px 6px 3px 0;
+      border:3px solid var(--line);box-shadow:3px 3px 0 rgba(24,32,51,.24); transform:rotate(-.6deg);
+    }
+    .pill:nth-of-type(2n){background:#87f0ff; transform:rotate(1deg)}
+    .pill:nth-of-type(3n){background:#b8f95a}
+    .settings{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:10px}
+    label{font-weight:900;color:#1f2a44}
+    input,select{
+      font:inherit;padding:10px;border:3px solid var(--line);border-radius:16px;background:white;width:100%;margin-top:4px;
+      box-shadow:inset 2px 2px 0 rgba(24,32,51,.08);
+    }
+    button{
+      font:inherit;border:3px solid var(--line);border-radius:16px;padding:11px 18px;cursor:pointer;font-weight:900;
+      transition:.13s;box-shadow:5px 5px 0 rgba(24,32,51,.35);letter-spacing:.01em
+    }
+    button:hover{transform:translate(-1px,-1px);box-shadow:7px 7px 0 rgba(24,32,51,.35)}
+    button:active{transform:translate(3px,3px);box-shadow:2px 2px 0 rgba(24,32,51,.35)}
+    button:disabled{opacity:.75;cursor:default}
+    .btn-primary{background:linear-gradient(135deg,#ff385c,#ff922b);color:white;text-shadow:1px 1px 0 rgba(0,0,0,.25)}
+    .btn-green{background:linear-gradient(135deg,#21b45b,#b8f95a);color:#10212f}.btn-purple{background:var(--purple);color:white}.btn-orange{background:var(--yellow);color:#271500}.btn-light{background:#e7f7ff;color:#111827}.btn-danger{background:#ffe2e8;color:#991b1b}
+    .progress-wrap{height:28px;background:#fff;border:3px solid var(--line);border-radius:999px;overflow:hidden;box-shadow:inset 3px 3px 0 rgba(24,32,51,.10)}
+    .
