@@ -1,0 +1,64 @@
+d rgba(93,69,40,.35);border-radius:14px;pointer-events:none}.scene-art .mascot-badge{position:absolute;left:10px;top:10px;background:rgba(255,255,255,.95);border:3px solid #5d4528;border-radius:14px;padding:5px 8px;font-weight:900;font-size:.88rem;box-shadow:2px 2px 0 rgba(24,32,51,.15)}
+    .scene-art svg{width:100%;height:100%;max-height:165px}
+    .compact-top p{margin:.3em 0}
+    #game{height:100%}
+    #logCard{display:flex;flex-direction:column;min-height:0;height:100%}
+    .log-wrap{min-height:0;overflow:auto;border-radius:18px;flex:1}
+    .game-actions{display:flex;gap:10px;justify-content:flex-start;align-items:center;flex-wrap:wrap}
+    #stageCard{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(720px,92vw);z-index:50;box-shadow:0 0 0 9999px rgba(15,22,38,.55), 10px 10px 0 rgba(24,32,51,.22)}
+    #finish{height:100%;display:flex;flex-direction:column;justify-content:center}
+    #intro p{margin:.45em 0}
+    @media (max-width:1020px){body{overflow:auto}main{height:auto;min-height:unset}.board-layout,.question-row,.hero{grid-template-columns:1fr}#game{height:auto}.question-card,#logCard{height:auto}.log-wrap{max-height:320px}.answers{grid-template-columns:1fr}.scene-art{min-height:120px}#stageCard{position:static;transform:none;width:auto;box-shadow:8px 8px 0 rgba(24,32,51,.22)}}
+    @media (max-width:760px){.hero{grid-template-columns:1fr}header:after{display:none}.card{box-shadow:5px 5px 0 rgba(24,32,51,.20)}main{padding:12px 10px 18px;height:auto}.task{font-size:1.1rem}}
+    @media print{header,.no-print,.answers,.feedback,.game-actions,#intro{display:none!important}body{background:white}body:before,body:after{display:none}main{max-width:none}.card{box-shadow:none;border:1px solid #999}.log th,.log td{font-size:10pt}}
+
+  
+    .mission-map{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:14px 0 8px}
+    .mission-map span{display:inline-block;background:white;border:3px solid var(--line);border-radius:14px;padding:8px 11px;font-weight:900;box-shadow:3px 3px 0 rgba(24,32,51,.18)}
+    .mission-map span:nth-child(1){background:#e2f3ff}.mission-map span:nth-child(3){background:#ffe1e8}.mission-map span:nth-child(5){background:#e5fff1}.mission-map span:nth-child(7){background:#fff2a8}.mission-map span:nth-child(9){background:#eee4ff}.mission-map b{font-size:1.4rem;color:#0f3f75}
+
+
+    .scene{
+      position:relative;
+      margin:14px 0 12px;
+      padding:14px 16px 14px 62px;
+      background:linear-gradient(135deg,#fff9c7 0%,#e9fbff 55%,#f4eaff 100%);
+      border:3px solid var(--line);
+      border-radius:20px;
+      box-shadow:5px 5px 0 rgba(24,32,51,.18);
+      font-size:1.05rem;
+      line-height:1.42;
+    }
+    .scene:before{content:"🕵️";position:absolute;left:14px;top:12px;font-size:2rem;filter:drop-shadow(2px 2px 0 rgba(24,32,51,.16));}
+    .task:before{content:"Auftrag:";display:inline-block;margin-right:10px;color:white;background:var(--pink);border:3px solid var(--line);border-radius:999px;padding:2px 10px;box-shadow:3px 3px 0 rgba(24,32,51,.18);font-size:1rem;vertical-align:middle}
+    .story-banner{margin-top:12px;padding:10px 13px;background:#fff;border:3px dashed var(--line);border-radius:18px;font-weight:900;color:#0f3f75}
+
+    .art-label{font-weight:900;fill:#14223a;font-family:Arial, Helvetica, sans-serif}
+
+    /* Abschluss-Effekt: sichtbar, aber ohne Layout zu verdecken */
+    #confettiCanvas{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:120;display:none}
+    #celebrateOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;pointer-events:none;z-index:130;padding:20px}
+    #celebrateOverlay.show{display:flex;pointer-events:auto}
+    .celebrate-box{background:rgba(255,255,255,.96);border:5px solid var(--line);border-radius:30px;padding:24px 30px;text-align:center;box-shadow:10px 10px 0 rgba(24,32,51,.25);max-width:min(92vw,640px);animation:popIn .45s ease}
+    .celebrate-box h2{font-size:clamp(1.8rem,4vw,3rem);margin:.1em 0;color:#ff2d55;text-shadow:2px 2px 0 rgba(255,225,77,.8)}
+    .celebrate-box p{font-size:1.08rem;margin:.5em 0}
+    @keyframes popIn{0%{transform:scale(.7) rotate(-4deg);opacity:0}70%{transform:scale(1.05) rotate(1deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+
+    .adventure-map{
+      position:relative;
+      margin:10px 0 8px;
+      padding:12px 14px 12px;
+      min-height:148px;
+      border:4px solid #5d4528;
+      border-radius:26px;
+      background:
+        radial-gradient(circle at 14% 26%, rgba(255,255,255,.18) 0 10px, transparent 11px),
+        radial-gradient(circle at 82% 18%, rgba(255,255,255,.15) 0 8px, transparent 9px),
+        repeating-radial-gradient(circle at 50% 50%, rgba(153,104,57,.04) 0 12px, transparent 12px 22px),
+        linear-gradient(180deg,#efd9a6 0%,#ead19a 48%,#e4c17d 100%);
+      box-shadow:6px 6px 0 rgba(24,32,51,.18);
+      overflow:hidden;
+    }
+    .adventure-map:before{content:"";position:absolute;left:20px;right:20px;top:72px;height:0;border-top:6px dashed #8b5e3c;opacity:.95}
+    .adventure-map:after{content:"SCHATZKARTE";position:absolute;right:14px;top:10px;background:#fff2a8;color:#5d4528;border:3px solid #5d4528;border-radius:999px;padding:4px 10px;font-size:.8rem;font-weight:900;box-shadow:2px 2px 0 rgba(24,32,51,.18)}
+    .adventure-map .compass{position:absolute;left:14px;top:10px;width:46px;height:46px;border:3px solid #5d4528;border-radius:50%;background:rgba(255,248,220,.75);display:grid;place-items:center;font
