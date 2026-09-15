@@ -1,0 +1,73 @@
+y="97" text-anchor="middle" class="art-label" font-size="16">Angebot</text><text x="130" y="148" text-anchor="middle" class="art-label" font-size="22">Marktstand</text></svg>`, topic);
+  if(t.includes('ausrüstung')) return wrapSceneArt(`<svg viewBox="0 0 260 170" role="img" aria-label="Ausrüstung"><rect x="10" y="18" width="240" height="140" rx="18" fill="#eef8ff" stroke="#162033" stroke-width="4"/><path d="M92 62 c0 -18 12 -28 38 -28 c26 0 38 10 38 28 v62 h-76z" fill="#b6d66d" stroke="#162033" stroke-width="4"/><rect x="112" y="58" width="36" height="18" rx="8" fill="#ffe14d" stroke="#162033" stroke-width="4"/><text x="130" y="148" text-anchor="middle" class="art-label" font-size="22">Ausrüstung</text></svg>`, topic);
+  if(t.includes('zielpfad')) return wrapSceneArt(`<svg viewBox="0 0 260 170" role="img" aria-label="Zielpfad"><rect x="10" y="18" width="240" height="140" rx="18" fill="#e9fbff" stroke="#162033" stroke-width="4"/><path d="M34 120 C80 110,96 78,130 86 C170 94,178 52,226 48" fill="none" stroke="#8b5e3c" stroke-width="14" stroke-linecap="round"/><path d="M210 34 h22 v16 l-7 -4 l-6 4 l-9 -4z" fill="#ff385c" stroke="#162033" stroke-width="3"/><text x="130" y="148" text-anchor="middle" class="art-label" font-size="22">Zielpfad</text></svg>`, topic);
+  return wrapSceneArt(`<svg viewBox="0 0 260 170" role="img" aria-label="Bruchinsel"><rect x="10" y="18" width="240" height="140" rx="18" fill="#e9fbff" stroke="#162033" stroke-width="4"/><ellipse cx="130" cy="92" rx="76" ry="38" fill="#9fe870" stroke="#162033" stroke-width="4"/><path d="M72 102 q34 -28 116 -10" fill="none" stroke="#8b5e3c" stroke-width="8" stroke-linecap="round"/><text x="130" y="148" text-anchor="middle" class="art-label" font-size="22">Bruchinsel</text></svg>`, topic);
+}
+
+function fracHTML(s){
+  s = String(s);
+  // Replace simple fraction tokens a/b with stacked spans, preserving units and operations.
+  return s.replace(/(\d+)\/(\d+)/g, (_,a,b)=>`<span class="frac"><span class="top">${a}</span><span class="bottom">${b}</span></span>`)
+          .replace(/\*/g,'<span class="op">·</span>')
+          .replace(/:/g,'<span class="op">:</span>');
+}
+function setHTML(id, text){ $(id).innerHTML = fracHTML(text); }
+function currentMission(){ return MISSIONS[state.level]; }
+function currentQuestion(){ return currentMission().questions[state.index]; }
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function load(){ try{ const s=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null'); if(s&&s.log) state=s; }catch(e){} }
+function startMission(){
+  state.level = $('levelSelect').value;
+  state.team = $('teamName').value.trim() || 'Team ohne Namen';
+  state.index = 0; state.attempts = 0; state.log = [];
+  finalCelebrationShown = false;
+  save();
+  document.body.classList.add('mission-active'); document.body.classList.remove('finish-active');
+  document.body.classList.remove('start-active','finish-active'); document.body.classList.add('mission-active');
+  $('intro').classList.add('hidden'); $('game').classList.remove('hidden'); $('finish').classList.add('hidden'); $('stageCard').classList.add('hidden');
+  render();
+}
+function render(){
+  clearRetryDelay();
+  hideCelebration();
+  const m=currentMission();
+  if(state.index >= m.questions.length){ finish(); return; }
+  const q=currentQuestion();
+  $('gameTitle').textContent = m.label + ' - Mission läuft';
+  $('gameIntro').textContent = m.intro;
+  $('teamBadge').textContent = state.team;
+  $('topicTag').textContent = q.topic;
+  $('stepInfo').textContent = `Aufgabe ${state.index+1} von ${m.questions.length}`;
+  $('progressBar').style.width = `${Math.round(state.index/m.questions.length*100)}%`;
+  setHTML('sceneText', q.scene || 'Löst den nächsten Auftrag der Bruchinsel.');
+  $('sceneArt').innerHTML = sceneArtSVG(q.topic);
+  setHTML('taskText', q.q);
+  $('feedback').className='feedback'; $('feedback').textContent='Wählt gemeinsam eine Antwort aus.';
+  $('hintBtn').classList.remove('hidden'); $('nextBtn').classList.add('hidden'); $('nextBtn').textContent = 'Weiter';
+  const ans=$('answers'); ans.innerHTML='';
+  const letters=['A','B','C','D'];
+  q.answers.forEach((a,i)=>{
+    const btn=document.createElement('button'); btn.className='answer'; btn.innerHTML=`<span class="letter">${letters[i]}</span><span>${fracHTML(a)}</span>`;
+    btn.onclick=()=>choose(a,btn); ans.appendChild(btn);
+  });
+  renderSidebarMap();
+  renderLog(); save();
+}
+function choose(answer, btn){
+  if(waitLocked) return;
+  const q=currentQuestion(); state.attempts++;
+  [...document.querySelectorAll('.answer')].forEach(b=>b.disabled=false);
+  if(answer===q.correct){
+    clearRetryDelay();
+    btn.classList.add('correct');
+    $('feedback').className='feedback ok';
+    const isFinalQuestion = state.index === currentMission().questions.length - 1;
+    $('feedback').innerHTML = `Geschafft. Ergebnis: <b>${fracHTML(q.correct)}</b><br><span class="small">Logbuch-Eintrag: ${q.id} - ${q.log}</span>`;
+    $('nextBtn').classList.remove('hidden'); $('hintBtn').classList.add('hidden');
+    $('nextBtn').textContent = isFinalQuestion ? 'Zum Abschluss' : 'Weiter';
+    [...document.querySelectorAll('.answer')].forEach(b=>b.disabled=true);
+    state.log.push({nr:state.index+1, topic:q.topic, task:q.q, result:q.correct, attempts:state.attempts});
+    state.attempts=0; renderLog(); save();
+    if(isFinalQuestion){
+      const meta = LEVEL_META[state.level] || LEVEL_META.basis;
+      $('feedback').innerHTML += `<br><span cl
