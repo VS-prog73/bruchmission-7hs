@@ -1,0 +1,83 @@
+em}
+    .celebrate-pillrow{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .celebrate-pill{background:#fff;border:3px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:900;box-shadow:2px 2px 0 rgba(24,32,51,.12)}
+    .sparkle-ring{pointer-events:none}
+    .sparkle-ring span{position:absolute;font-size:1.35rem;animation:twinkle 1.8s infinite ease-in-out;filter:drop-shadow(1px 1px 0 rgba(24,32,51,.18))}
+    .sparkle-ring span:nth-child(1){left:22px;top:18px;animation-delay:.1s}
+    .sparkle-ring span:nth-child(2){right:28px;top:30px;animation-delay:.5s}
+    .sparkle-ring span:nth-child(3){left:40px;bottom:40px;animation-delay:1s}
+    .sparkle-ring span:nth-child(4){right:38px;bottom:34px;animation-delay:.8s}
+    .sparkle-ring span:nth-child(5){left:48%;top:8px;animation-delay:1.3s}
+    .sparkle-ring span:nth-child(6){left:50%;bottom:10px;animation-delay:1.55s}
+    @keyframes twinkle{0%,100%{transform:scale(.85);opacity:.45}50%{transform:scale(1.18);opacity:1}}
+
+    @media (max-width:1020px){.finish-grid,.adventure-row,.sidebar-map-steps{grid-template-columns:1fr 1fr}.adventure-map{min-height:auto}.adventure-map:before,.sidebar-map:before{display:none}}
+    @media (max-width:760px){.finish-grid,.adventure-row,.sidebar-map-steps{grid-template-columns:1fr}.map-node{margin-bottom:6px}.celebrate-box{padding:22px 16px 18px}.finish-actions{flex-direction:column}}
+
+    #intro .small{font-size:.86rem}
+  
+    body.start-active #intro{display:grid}
+    body.start-active #game, body.start-active #finish{display:none!important}
+    body.start-active main{height:auto;overflow:visible}
+    body.start-active{overflow:auto}
+    #startBtn{position:relative;z-index:25;display:inline-block;margin-top:8px;margin-bottom:6px;padding:12px 20px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Bruchinsel-Mission 7 HS</h1>
+  <div class="small">Story-Lernspiel zu Bruchrechnen und Anteilen von Größen - Online-Lernspiel für IServ-Aufgaben</div>
+</header>
+<main>
+  <section id="intro" class="card hero">
+    <div>
+      <h2>Story: Rettet die Bruchinsel!</h2>
+      <p>Ein Sturm hat die Bruchinsel durcheinandergebracht: Vorräte, Karten, Seile, Codes und Ausrüstung sind in Bruchteile zerlegt. Ihr seid das Rettungsteam. Jede gelöste Aufgabe repariert einen Teil der Insel. Nach jedem Themenblock erreicht ihr ein neues Etappenziel. Eure Ergebnisse tragt ihr als Lernnachweis ins Logbuch ein.</p>
+      <span class="pill">2 Niveaus</span><span class="pill">15 Story-Aufgaben</span><span class="pill">5 Etappenziele</span><span class="pill">Logbuch</span>
+
+      <div class="adventure-map" aria-label="Schatzkarte der Bruchinsel">
+        <div class="compass">🧭</div>
+        <div class="adventure-row">
+          <div class="map-node"><div class="bubble">🥣</div><div class="label">Vorräte</div><div class="mascot">🐵 Momo</div></div>
+          <div class="map-node"><div class="bubble">🌉</div><div class="label">Brücke</div><div class="mascot">🦜 Kiki</div></div>
+          <div class="map-node"><div class="bubble">🛠️</div><div class="label">Werkstatt</div><div class="mascot">🤖 Tüfti</div></div>
+          <div class="map-node"><div class="bubble">🚪</div><div class="label">Lagertor</div><div class="mascot">🦊 Fino</div></div>
+          <div class="map-node"><div class="bubble">🏁</div><div class="label">Zielpfad</div><div class="mascot">🐯 Nala</div></div>
+        </div>
+        <div class="map-caption">Eure Schatzroute: Addieren → Subtrahieren → Multiplizieren → Dividieren → Anteile von Größen</div>
+        <div class="xmark">❌ Schatzziel</div>
+      </div>
+      <div class="story-banner">Ziel der Mission: Repariert fünf Orte der Bruchinsel, sammelt Teilerfolge und knackt den Mission-Code.</div>
+      <div class="settings">
+        <label>Teamname<input id="teamName" placeholder="z. B. Team Bruchdetektive"></label>
+        <label>Niveau<select id="levelSelect"><option value="basis">● Basisniveau</option><option value="standard">▲ Standardniveau</option></select></label>
+      </div>
+      <button class="btn-primary" id="startBtn">Mission starten</button>
+      <p class="small"><b>Arbeitsheft/Logbuch:</b> Bitte den PDF-Anhang in der IServ-Aufgabe öffnen oder ausdrucken.</p>
+    </div>
+    <div class="card warn" style="margin:0">
+      <h3>Teamregeln</h3>
+      <div class="rolebox">
+        <div class="role"><strong>Rechner/in</strong><br>rechnet vor.</div>
+        <div class="role"><strong>Erklärer/in</strong><br>sagt den Weg.</div>
+        <div class="role"><strong>Logbuchchef/in</strong><br>trägt das Ergebnis ein.</div>
+      </div>
+      <p><b>Ablauf pro Auftrag:</b> Story lesen, 20 Sekunden allein denken, im Team beraten, gemeinsam antworten und den Rechenweg ins Logbuch übertragen.</p>
+    </div>
+  </section>
+
+  <section id="game" class="hidden board-layout">
+    <div class="card question-card">
+      <div class="mission-top compact-top">
+        <div>
+          <h2 id="gameTitle" style="margin:0"></h2>
+          <div id="gameIntro" class="small"></div>
+        </div>
+        <div class="badge" id="teamBadge"></div>
+      </div>
+      <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="topic-line"><span class="topic-tag" id="topicTag"></span><span id="stepInfo" class="small"></span></div>
+      <div class="question-row">
+        <div class="scene" id="sceneText"></div>
+        <div class="scene-art" id="sceneArt" aria-label="Bild zum Missionsort"></div>
+      </div>
