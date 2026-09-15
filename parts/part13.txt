@@ -1,0 +1,21 @@
+e: ' + m.missionCode;
+  renderSidebarMap(true);
+  renderLog(); save();
+}
+function showStartPage(){
+  clearRetryDelay();
+  hideCelebration();
+  document.body.classList.remove('mission-active','finish-active');
+  document.body.classList.add('start-active');
+  $('intro').classList.remove('hidden');
+  $('game').classList.add('hidden');
+  $('finish').classList.add('hidden');
+  $('stageCard').classList.add('hidden');
+}
+function reset(){ if(confirm('Mission wirklich zurücksetzen?')){ localStorage.removeItem(STORAGE_KEY); location.reload(); }}
+$('startBtn').onclick=startMission; $('hintBtn').onclick=hint; $('nextBtn').onclick=next; $('stageNextBtn').onclick=continueStage; $('resetBtn').onclick=reset;
+// Beim Öffnen soll zuverlässig immer zuerst die Startseite erscheinen.
+showStartPage();
+</script>
+</body>
+</html>
